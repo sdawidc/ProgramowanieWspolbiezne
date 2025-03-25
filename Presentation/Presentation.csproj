@@ -9,8 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Model\" />
-    <Folder Include="ViewModel\" />
+    <PackageReference Include="System.Reactive" Version="6.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Logic\Logic.csproj" />
   </ItemGroup>
 
 </Project>

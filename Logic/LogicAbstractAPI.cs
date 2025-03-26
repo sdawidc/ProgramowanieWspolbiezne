@@ -1,20 +1,11 @@
-﻿//____________________________________________________________________________________________________________________________________
-//
-//  Copyright (C) 2024, Mariusz Postol LODZ POLAND.
-//
-//  To be in touch join the community by pressing the `Watch` button and get started commenting using the discussion panel at
-//
-//  https://github.com/mpostol/TP/discussions/182
-//
-//_____________________________________________________________________________________________________________________________________
-
+﻿
 namespace Logic
 {
-  public abstract class BusinessLogicAbstractAPI : IDisposable
+  public abstract class LogicAbstractAPI : IDisposable
   {
     #region Layer Factory
 
-    public static BusinessLogicAbstractAPI GetBusinessLogicLayer()
+    public static LogicAbstractAPI GetBusinessLogicLayer()
     {
       return modelInstance.Value;
     }
@@ -37,7 +28,7 @@ namespace Logic
 
     #region private
 
-    private static Lazy<BusinessLogicAbstractAPI> modelInstance = new Lazy<BusinessLogicAbstractAPI>(() => new BusinessLogicImplementation());
+    private static Lazy<LogicAbstractAPI> modelInstance = new Lazy<LogicAbstractAPI>(() => new LogicImplementation());
 
     #endregion private
   }

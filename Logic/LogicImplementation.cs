@@ -1,26 +1,18 @@
-﻿//____________________________________________________________________________________________________________________________________
-//
-//  Copyright (C) 2024, Mariusz Postol LODZ POLAND.
-//
-//  To be in touch join the community by pressing the `Watch` button and get started commenting using the discussion panel at
-//
-//  https://github.com/mpostol/TP/discussions/182
-//
-//_____________________________________________________________________________________________________________________________________
+﻿
 
 using System.Diagnostics;
 using UnderneathLayerAPI = Data.DataAbstractAPI;
 
 namespace Logic;
 
-internal class BusinessLogicImplementation : BusinessLogicAbstractAPI
+internal class LogicImplementation : LogicAbstractAPI
 {
 #region ctor
 
-public BusinessLogicImplementation() : this(null)
+public LogicImplementation() : this(null)
 { }
 
-internal BusinessLogicImplementation(UnderneathLayerAPI? underneathLayer)
+internal LogicImplementation(UnderneathLayerAPI? underneathLayer)
 {
   layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetDataLayer() : underneathLayer;
 }
@@ -32,7 +24,7 @@ internal BusinessLogicImplementation(UnderneathLayerAPI? underneathLayer)
 public override void Dispose()
 {
   if (Disposed)
-    throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
+    throw new ObjectDisposedException(nameof(LogicImplementation));
   layerBellow.Dispose();
   Disposed = true;
 }
@@ -40,7 +32,7 @@ public override void Dispose()
 public override void Start(int numberOfBalls, Action<IPosition, IBall> upperLayerHandler)
 {
   if (Disposed)
-    throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
+    throw new ObjectDisposedException(nameof(LogicImplementation));
   if (upperLayerHandler == null)
     throw new ArgumentNullException(nameof(upperLayerHandler));
   layerBellow.Start(numberOfBalls, (startingPosition, databall) => upperLayerHandler(new Position(startingPosition.x, startingPosition.x), new Ball(databall)));

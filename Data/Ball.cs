@@ -24,18 +24,50 @@ namespace Data
     #region private
 
     private Vector Position;
+    
+    private const double Diameter = 20;
 
-    private void RaiseNewPositionChangeNotification()
+
+        private void RaiseNewPositionChangeNotification()
     {
       NewPositionNotification?.Invoke(this, Position);
     }
 
     internal void Move(Vector delta)
     {
-      Position = new Vector(Position.x + delta.x, Position.y + delta.y);
-      RaiseNewPositionChangeNotification();
-    }
+            double newX = Position.x + delta.x;
+            double newY = Position.y + delta.y;
 
-    #endregion private
-  }
+            double minX = 0;
+            double minY = 0;
+            double maxX = 400;
+            double maxY = 420; 
+
+            double effectiveMaxX = maxX - Diameter;
+            double effectiveMaxY = maxY - Diameter;
+
+            if (newX < minX)
+            {
+                newX = minX;
+            }
+            else if (newX > effectiveMaxX)
+            {
+                newX = effectiveMaxX;
+            }
+
+            if (newY < minY)
+            {
+                newY = minY;
+            }
+            else if (newY > effectiveMaxY)
+            {
+                newY = effectiveMaxY;
+            }
+
+            Position = new Vector(newX, newY);
+            RaiseNewPositionChangeNotification();
+        }
+
+        #endregion private
+    }
 }

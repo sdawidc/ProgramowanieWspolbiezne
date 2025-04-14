@@ -19,23 +19,26 @@ namespace Data
         #region DataAbstractAPI
 
         public override void Start(int numberOfBalls, Action<IVector, IBall> upperLayerHandler)
-    {
-      if (Disposed)
-        throw new ObjectDisposedException(nameof(DataImplementation));
-      if (upperLayerHandler == null)
-        throw new ArgumentNullException(nameof(upperLayerHandler));
+        {
+            if (Disposed)
+                throw new ObjectDisposedException(nameof(DataImplementation));
+            if (upperLayerHandler == null)
+                throw new ArgumentNullException(nameof(upperLayerHandler));
 
-      Random random = new Random();
+            Random random = new Random();
+        
+            lock (_ballsListLock)
+            {
+                for (int i = 0; i < numberOfBalls; i++)
+                {
 
-      for (int i = 0; i < numberOfBalls; i++)
-      {
+                    Vector startingPosition = new Vector(random.Next(100, 300), random.Next(100, 300));
+                    Vector startingVelocity = new Vector((random.NextDouble() - 0.5) * 7.0, (random.NextDouble() - 0.5) * 7.0);
+                    Ball newBall = new Ball(startingPosition, startingVelocity);
+                    upperLayerHandler(startingPosition, newBall);
+                    BallsList.Add(newBall);
 
-         Vector startingPosition = new Vector(random.Next(100, 300), random.Next(100, 300));
-         Vector startingVelocity = new Vector((random.NextDouble() - 0.5) * 7.0, (random.NextDouble() - 0.5) * 7.0);
-         Ball newBall = new Ball(startingPosition, startingVelocity);
-         upperLayerHandler(startingPosition, newBall);
-         BallsList.Add(newBall);
-
+                }
             }
     }
 
@@ -74,33 +77,39 @@ namespace Data
     private Random RandomGenerator = new();
     private List<Ball> BallsList = new List<Ball>();
 
-    private void Move(object? x)
-    {
+        private readonly object _ballsListLock = new object();
+        private void Move(object? x)
+        {
 
-            double dt = 0.016;
-            double maxSpeed = 5.0;
-            double accelerationFactor = 0.2;
+            double dt = 0.03;
+            double maxSpeed = 8.0;
+            double accelerationFactor = 0.6;
 
-            foreach (Ball ball in BallsList)
+            lock (_ballsListLock)
             {
 
-                var currentVelocity = ball.Velocity;
-                double deltaVx = (RandomGenerator.NextDouble() - 0.5) * accelerationFactor;
-                double deltaVy = (RandomGenerator.NextDouble() - 0.5) * accelerationFactor;
-                Vector newVelocity = new Vector(currentVelocity.x + deltaVx, currentVelocity.y + deltaVy);
-
-                double speed = Math.Sqrt(newVelocity.x * newVelocity.x + newVelocity.y * newVelocity.y);
-                if (speed > maxSpeed)
+                foreach (Ball ball in BallsList)
                 {
-                    newVelocity = new Vector(newVelocity.x * maxSpeed / speed, newVelocity.y * maxSpeed / speed);
+
+                    var currentVelocity = ball.Velocity;
+                    double deltaVx = (RandomGenerator.NextDouble() - 0.5) * accelerationFactor;
+                    double deltaVy = (RandomGenerator.NextDouble() - 0.5) * accelerationFactor;
+                    Vector newVelocity = new Vector(currentVelocity.x + deltaVx, currentVelocity.y + deltaVy);
+
+                    double speed = Math.Sqrt(newVelocity.x * newVelocity.x + newVelocity.y * newVelocity.y);
+                    if (speed > maxSpeed)
+                    {
+                        newVelocity = new Vector(newVelocity.x * maxSpeed / speed, newVelocity.y * maxSpeed / speed);
+                    }
+
+                    ball.Velocity = newVelocity;
+
+                    Vector deltaPosition = new Vector(newVelocity.x * dt, newVelocity.y * dt);
+                    ball.Move(deltaPosition);
                 }
-
-                ball.Velocity = newVelocity;
-
-                Vector deltaPosition = new Vector(newVelocity.x * dt, newVelocity.y * dt);
-                ball.Move(deltaPosition);
             }
-    }
+        }
+    
 
     #endregion private
 

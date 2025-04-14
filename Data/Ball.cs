@@ -43,8 +43,8 @@ namespace Data
             double maxX = 400;
             double maxY = 420; 
 
-            double effectiveMaxX = maxX - Diameter;
-            double effectiveMaxY = maxY - Diameter;
+            double effectiveMaxX = maxX - Diameter*1.5 + 2;
+            double effectiveMaxY = maxY - Diameter*1.5 + 2;
 
             if (newX < minX)
             {

@@ -22,9 +22,10 @@ namespace Presentation.View
     {
       Random random = new Random();
       InitializeComponent();
+      this.Width = SystemParameters.PrimaryScreenWidth;
+      this.Height = SystemParameters.PrimaryScreenHeight;
       MainWindowViewModel viewModel = (MainWindowViewModel)DataContext;
-      double screenWidth = SystemParameters.PrimaryScreenWidth;
-      double screenHeight = SystemParameters.PrimaryScreenHeight;
+      
       viewModel.Start(random.Next(5, 10));
     }
 

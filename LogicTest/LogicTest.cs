@@ -63,6 +63,32 @@ namespace LogicTest
             public override void Dispose()
             { }
 
+            public override void MoveBall(int ballNumber, IVector vector)
+            {
+                
+            }
+
+            public override IVector GetBallPosition(int index)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override int GetBallsListSize()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override IVector GetBallVelocity(int index)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void SetBallVelocity(int index, IVector newVelocity)
+            {
+                throw new NotImplementedException();
+            }
+
+
             public override void Start(int numberOfBalls, Action<IVector, Data.IBall> upperLayerHandler)
             {
                 throw new NotImplementedException();
@@ -72,6 +98,31 @@ namespace LogicTest
         private class DataLayerDisposeFixcure : Data.DataAbstractAPI
         {
             internal bool Disposed = false;
+
+            public override IVector GetBallPosition(int index)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override int GetBallsListSize()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override IVector GetBallVelocity(int index)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void SetBallVelocity(int index, IVector newVelocity)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void MoveBall(int ballNumber, IVector vector)
+            {
+                throw new NotImplementedException();
+            }
 
             public override void Dispose()
             {
@@ -92,6 +143,31 @@ namespace LogicTest
             public override void Dispose()
             { }
 
+            public override void MoveBall(int ballNumber, IVector vector)
+            {
+
+            }
+
+            public override IVector GetBallPosition(int index)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override int GetBallsListSize()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override IVector GetBallVelocity(int index)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void SetBallVelocity(int index, IVector newVelocity)
+            {
+                throw new NotImplementedException();
+            }
+
             public override void Start(int numberOfBalls, Action<IVector, Data.IBall> upperLayerHandler)
             {
                 StartCalled = true;
@@ -108,6 +184,7 @@ namespace LogicTest
             private class DataBallFixture : Data.IBall
             {
                 public IVector Velocity { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+                public IVector Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
                 public event EventHandler<IVector>? NewPositionNotification = null;
             }

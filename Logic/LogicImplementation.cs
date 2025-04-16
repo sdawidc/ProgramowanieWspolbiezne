@@ -26,6 +26,7 @@ public override void Dispose()
 {
   if (Disposed)
     throw new ObjectDisposedException(nameof(LogicImplementation));
+        movementTimer?.Dispose();
         layerBellow.Dispose();
   Disposed = true;
 }

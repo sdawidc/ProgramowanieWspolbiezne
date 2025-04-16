@@ -18,14 +18,10 @@ namespace Data
     public event EventHandler<IVector>? NewPositionNotification;
 
     public IVector Velocity { get; set; }
-
+    public IVector Position { get; set; }
     #endregion IBall
 
     #region private
-
-    private Vector Position;
-    
-    private const double Diameter = 20;
 
 
         private void RaiseNewPositionChangeNotification()
@@ -33,38 +29,13 @@ namespace Data
       NewPositionNotification?.Invoke(this, Position);
     }
 
-    internal void Move(Vector delta)
+    internal void Move(IVector delta)
     {
             double newX = Position.x + delta.x;
             double newY = Position.y + delta.y;
 
-            double minX = 0;
-            double minY = 0;
-            double maxX = 400;
-            double maxY = 420; 
-
-            double effectiveMaxX = maxX - Diameter*1.5 + 2;
-            double effectiveMaxY = maxY - Diameter*1.5 + 2;
-
-            if (newX < minX)
-            {
-                newX = minX;
-            }
-            else if (newX > effectiveMaxX)
-            {
-                newX = effectiveMaxX;
-            }
-
-            if (newY < minY)
-            {
-                newY = minY;
-            }
-            else if (newY > effectiveMaxY)
-            {
-                newY = effectiveMaxY;
-            }
-
             Position = new Vector(newX, newY);
+
             RaiseNewPositionChangeNotification();
         }
 

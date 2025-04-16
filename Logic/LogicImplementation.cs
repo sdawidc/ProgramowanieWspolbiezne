@@ -1,6 +1,7 @@
 ﻿
 
 using System.Diagnostics;
+using System.Threading;
 using UnderneathLayerAPI = Data.DataAbstractAPI;
 
 namespace Logic;
@@ -25,24 +26,70 @@ public override void Dispose()
 {
   if (Disposed)
     throw new ObjectDisposedException(nameof(LogicImplementation));
-  layerBellow.Dispose();
+        layerBellow.Dispose();
   Disposed = true;
 }
 
-public override void Start(int numberOfBalls, Action<IPosition, IBall> upperLayerHandler)
-{
-  if (Disposed)
-    throw new ObjectDisposedException(nameof(LogicImplementation));
-  if (upperLayerHandler == null)
-    throw new ArgumentNullException(nameof(upperLayerHandler));
-  layerBellow.Start(numberOfBalls, (startingPosition, databall) => upperLayerHandler(new Position(startingPosition.x, startingPosition.y), new Ball(databall)));
-}
+    public override void Start(int numberOfBalls, Action<IPosition, IBall> upperLayerHandler)
+    {
+        if (Disposed)
+            throw new ObjectDisposedException(nameof(LogicImplementation));
+        if (upperLayerHandler == null)
+            throw new ArgumentNullException(nameof(upperLayerHandler));
+        layerBellow.Start(numberOfBalls, (startingPosition, databall) => upperLayerHandler(new Position(startingPosition.x, startingPosition.y), new Ball(databall)));
+        movementTimer = new Timer(MoveBalls, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(16));
+    }
 
-#endregion BusinessLogicAbstractAPI
+    public override void MoveBalls(object? x)
+    {
 
-#region private
+        if (Disposed)
+            throw new ObjectDisposedException(nameof(LogicImplementation));
 
-private bool Disposed = false;
+        double minX = 0;
+        double minY = 0;
+        double maxX = 400;
+        double maxY = 420;
+        double diameter = 20;
+        double effectiveMaxX = maxX - diameter * 1.5 + 2;
+        double effectiveMaxY = maxY - diameter * 1.5 + 2;
+
+        for (int i = 0; i < layerBellow.GetBallsListSize(); i++)
+        {
+            Data.IVector velocity = layerBellow.GetBallVelocity(i);
+            Data.IVector currentPos = layerBellow.GetBallPosition(i);
+
+            double newX = currentPos.x + velocity.x;
+            double newY = currentPos.y + velocity.y;
+
+            double newVelocityX = velocity.x;
+            double newVelocityY = velocity.y;
+
+            // Odbicie od ścian
+            if (newX < minX || newX > effectiveMaxX)
+            {
+                newVelocityX *= -1;
+                newX = Math.Clamp(newX, minX, effectiveMaxX);
+            }
+
+            if (newY < minY || newY > effectiveMaxY)
+            {
+                newVelocityY *= -1;
+                newY = Math.Clamp(newY, minY, effectiveMaxY);
+            }
+
+            layerBellow.SetBallVelocity(i, new Vector(newVelocityX, newVelocityY));
+            layerBellow.MoveBall(i, new Vector(newX - currentPos.x, newY - currentPos.y));
+        }
+    }
+    #endregion BusinessLogicAbstractAPI
+
+    #region private
+
+    private Timer? movementTimer;
+    private const double frameInterval = 16; // ok. 60 FPS
+
+    private bool Disposed = false;
 
 private readonly UnderneathLayerAPI layerBellow;
 

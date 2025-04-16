@@ -1,4 +1,6 @@
 ﻿
+using System.Numerics;
+
 namespace Data
 {
   public abstract class DataAbstractAPI : IDisposable
@@ -15,6 +17,14 @@ namespace Data
     #region public API
 
     public abstract void Start(int numberOfBalls, Action<IVector, IBall> upperLayerHandler);
+
+    public abstract int GetBallsListSize();
+
+        public abstract IVector GetBallPosition(int index);
+        public abstract IVector GetBallVelocity(int index);
+        public abstract void SetBallVelocity(int index, IVector newVelocity);
+
+    public abstract void MoveBall(int ballNumber,IVector vector);
 
     #endregion public API
 
@@ -49,5 +59,6 @@ namespace Data
     event EventHandler<IVector> NewPositionNotification;
 
     IVector Velocity { get; set; }
-  }
+    IVector Position { get; set; }
+    }
 }

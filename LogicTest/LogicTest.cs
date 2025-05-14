@@ -63,6 +63,16 @@ namespace LogicTest
             public override void Dispose()
             { }
 
+            public override double GetBallRadius(int index)
+            {
+                return 5.0;
+            }
+
+            public override double GetBallWeight(int index)
+            {
+                return 1.0;
+            }
+
             public override void MoveBall(int ballNumber, IVector vector)
             {
                 
@@ -103,7 +113,15 @@ namespace LogicTest
             {
                 throw new NotImplementedException();
             }
+            public override double GetBallRadius(int index)
+            {
+                return 5.0;
+            }
 
+            public override double GetBallWeight(int index)
+            {
+                return 1.0;
+            }
             public override int GetBallsListSize()
             {
                 throw new NotImplementedException();
@@ -139,6 +157,16 @@ namespace LogicTest
         {
             internal bool StartCalled = false;
             internal int NumberOfBallseCreated = -1;
+
+            public override double GetBallRadius(int index)
+            {
+                return 5.0;
+            }
+
+            public override double GetBallWeight(int index)
+            {
+                return 1.0;
+            }
 
             public override void Dispose()
             { }
@@ -183,6 +211,8 @@ namespace LogicTest
 
             private class DataBallFixture : Data.IBall
             {
+                public double Radius { get; set; } = 5.0;
+                public double Weight { get; set; } = 1.0;
                 public IVector Velocity { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
                 public IVector Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 

@@ -9,14 +9,14 @@ namespace DataTest
         public void ConstructorTestMethod()
         {
             Vector testinVector = new Vector(0.0, 0.0);
-            Ball newInstance = new(testinVector, testinVector);
+            Ball newInstance = new(testinVector, testinVector, 5.0);
         }
 
         [TestMethod]
         public void MoveTestMethod()
         {
             Vector initialPosition = new(10.0, 10.0);
-            Ball newInstance = new(initialPosition, new Vector(0.0, 0.0));
+            Ball newInstance = new(initialPosition, new Vector(0.0, 0.0), 5.0);
             IVector currentPosition = new Vector(0.0, 0.0);
             int numberOfCallBackCalled = 0;
             newInstance.NewPositionNotification += (sender, position) => { Assert.IsNotNull(sender); currentPosition = position; numberOfCallBackCalled++; };

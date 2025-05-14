@@ -25,10 +25,13 @@ namespace LogicTest
 
             public event EventHandler<Data.IVector>? NewPositionNotification;
 
+            public double Radius { get; set; } = 5.0;
+            public double Weight { get; set; } = 1.0;
             internal void Move()
             {
                 NewPositionNotification?.Invoke(this, new VectorFixture(0.0, 0.0));
             }
+
         }
 
         private class VectorFixture : Data.IVector

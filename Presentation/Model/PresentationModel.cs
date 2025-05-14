@@ -57,7 +57,7 @@ namespace Presentation.Model
 
     private void StartHandler(Logic.IPosition position, Logic.IBall ball)
     {
-      ModelBall newBall = new ModelBall(position.x, position.y, ball) { Diameter = 20.0 };
+      ModelBall newBall = new ModelBall(position.x, position.y, ball) { Diameter = ball.Radius*2 };
       BallChanged.Invoke(this, new BallChangeEventArgs() { Ball = newBall });
     }
 

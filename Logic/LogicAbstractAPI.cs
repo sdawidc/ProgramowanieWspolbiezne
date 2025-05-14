@@ -53,5 +53,6 @@ namespace Logic
   public interface IBall 
   {
     event EventHandler<IPosition> NewPositionNotification;
-  }
+    double Radius { get; }
+    }
 }

@@ -5,10 +5,11 @@ namespace Data
   {
     #region ctor
 
-    internal Ball(Vector initialPosition, Vector initialVelocity)
+    internal Ball(Vector initialPosition, Vector initialVelocity, double radius)
     {
       Position = initialPosition;
       Velocity = initialVelocity;
+      Radius = radius;
     }
 
     #endregion ctor
@@ -19,6 +20,8 @@ namespace Data
 
     public IVector Velocity { get; set; }
     public IVector Position { get; set; }
+    public double Radius { get; set; }
+        public double Weight => Radius * 10f;
     #endregion IBall
 
     #region private

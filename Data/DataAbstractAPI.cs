@@ -24,7 +24,10 @@ namespace Data
         public abstract IVector GetBallVelocity(int index);
         public abstract void SetBallVelocity(int index, IVector newVelocity);
 
-    public abstract void MoveBall(int ballNumber,IVector vector);
+        public abstract double GetBallRadius(int index);
+        public abstract double GetBallWeight(int index);
+
+        public abstract void MoveBall(int ballNumber,IVector vector);
 
     #endregion public API
 
@@ -60,5 +63,9 @@ namespace Data
 
     IVector Velocity { get; set; }
     IVector Position { get; set; }
+
+    double Radius { get; set; }
+
+    double Weight { get; }
     }
 }

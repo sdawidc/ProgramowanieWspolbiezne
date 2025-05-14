@@ -49,14 +49,14 @@ public override void Dispose()
 
         double minX = 0;
         double minY = 0;
-        double maxX = 400;
-        double maxY = 420;
-        double diameter = 20;
-        double effectiveMaxX = maxX - diameter * 1.5 + 2;
-        double effectiveMaxY = maxY - diameter * 1.5 + 2;
+        double maxX = 392;
+        double maxY = 412;
 
         for (int i = 0; i < layerBellow.GetBallsListSize(); i++)
         {
+            double radius = layerBellow.GetBallRadius(i);
+            double diameter = radius * 2;
+
             Data.IVector velocity = layerBellow.GetBallVelocity(i);
             Data.IVector currentPos = layerBellow.GetBallPosition(i);
 
@@ -66,17 +66,18 @@ public override void Dispose()
             double newVelocityX = velocity.x;
             double newVelocityY = velocity.y;
 
-            // Odbicie od ścian
-            if (newX < minX || newX > effectiveMaxX)
+            // Odbicie od lewej/prawej ściany (uwzględniając lewy górny róg jako anchor)
+            if (newX < minX || newX + diameter > maxX)
             {
                 newVelocityX *= -1;
-                newX = Math.Clamp(newX, minX, effectiveMaxX);
+                newX = Math.Clamp(newX, minX, maxX - diameter);
             }
 
-            if (newY < minY || newY > effectiveMaxY)
+            // Odbicie od góry/dolnej ściany
+            if (newY < minY || newY + diameter > maxY)
             {
                 newVelocityY *= -1;
-                newY = Math.Clamp(newY, minY, effectiveMaxY);
+                newY = Math.Clamp(newY, minY, maxY - diameter);
             }
 
             layerBellow.SetBallVelocity(i, new Vector(newVelocityX, newVelocityY));

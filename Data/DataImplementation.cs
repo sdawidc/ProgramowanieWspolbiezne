@@ -26,13 +26,15 @@ namespace Data
 
             Random random = new Random();
 
+            double VELOCITYFACTOR = 3.0;
 
             for (int i = 0; i < numberOfBalls; i++)
             {
 
                 Vector startingPosition = new Vector(random.Next(100, 300), random.Next(100, 300));
-                Vector startingVelocity = new Vector((random.NextDouble() - 0.5) * 7.0, (random.NextDouble() - 0.5) * 7.0);
-                Ball newBall = new Ball(startingPosition, startingVelocity);
+                Vector startingVelocity = new Vector((random.NextDouble() - 0.5) * VELOCITYFACTOR, (random.NextDouble() - 0.5) * VELOCITYFACTOR);
+                double radius = random.NextDouble()*10+10;
+                Ball newBall = new Ball(startingPosition, startingVelocity, radius);
                 upperLayerHandler(startingPosition, newBall);
                 BallsList.Add(newBall);
 
@@ -55,6 +57,11 @@ namespace Data
             return BallsList.ElementAt(index).Position; 
         }
 
+        public override double GetBallRadius(int index)
+        {
+            return BallsList.ElementAt(index).Radius;
+        }
+
         public override IVector GetBallVelocity(int index)
         {
             return BallsList.ElementAt(index).Velocity;
@@ -63,6 +70,11 @@ namespace Data
         public override void SetBallVelocity(int index, IVector newVelocity)
         {
             BallsList.ElementAt(index).Velocity = newVelocity;
+        }
+
+        public override double GetBallWeight(int index)
+        {
+            return BallsList.ElementAt(index).Weight;
         }
 
         #endregion DataAbstractAPI

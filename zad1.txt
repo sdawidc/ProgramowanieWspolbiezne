@@ -1,0 +1,8 @@
+https://github.com/sdawidc/ProgramowanieWspolbiezne
+
+v1.1.1
+
+| Name Surname (initials) | GUID                                     |
+| ----------------------- | ---------------------------------------- |
+| Zuzanna Adamczyk        | `{C5CE5368-26B9-46A5-9CC4-1A904AE070EC}` |
+| Dawid Ciesielski        | `{799E8D06-DA94-4213-A2DD-663D486F17CF}` |

@@ -9,12 +9,13 @@ namespace Presentation.Model
 {
   internal class ModelBall : IBall
   {
-    public ModelBall(double top, double left, LogicIBall underneathBall)
-    {
-      TopBackingField = top;
-      LeftBackingField = left;
-      underneathBall.NewPositionNotification += NewPositionNotification;
-    }
+        public ModelBall(double top, double left, LogicIBall underneathBall)
+        {
+            TopBackingField = top;
+            LeftBackingField = left;
+            Diameter = underneathBall.Radius * 2;
+            underneathBall.NewPositionNotification += NewPositionNotification;
+        }
 
     #region IBall
 

@@ -53,6 +53,10 @@ namespace Logic
   public interface IBall 
   {
     event EventHandler<IPosition> NewPositionNotification;
-    double Radius { get; }
+        public Data.IVector Position { get; set; }
+        public Data.IVector Velocity { get; set; }
+        public double Radius { get; set; }
+        public double Weight { get; }
+
     }
 }

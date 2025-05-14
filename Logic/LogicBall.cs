@@ -1,4 +1,6 @@
 ﻿
+using Data;
+
 namespace Logic
 {
     internal class Ball : IBall
@@ -14,10 +16,31 @@ namespace Logic
         #region IBall
 
         public event EventHandler<IPosition>? NewPositionNotification;
-        public double Radius => ballData.Radius;
+        public IVector Position
+        {
+            get => ballData.Position;
+            set => ballData.Position = new Vector(value.x, value.y);
+        }
+
+        public IVector Velocity
+        {
+            get => ballData.Velocity;
+            set => ballData.Velocity = new Vector(value.x, value.y);
+        }
+
+        public double Radius
+        {
+            get => ballData.Radius;
+            set => ballData.Radius = value;
+        }
+
+        public double Weight
+        {
+            get => ballData.Weight;
+        }
 
 
-        #endregion IBall
+        #endregion IBallc
 
         #region private
 

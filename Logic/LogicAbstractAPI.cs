@@ -29,10 +29,10 @@ namespace Logic
 
     #region private
 
-    private static Lazy<LogicAbstractAPI> modelInstance = new Lazy<LogicAbstractAPI>(() => new LogicImplementation());
+    private static Lazy<LogicAbstractAPI> modelInstance = new Lazy<LogicAbstractAPI>(() => new LogicImplementationCollisions());
 
-    #endregion private
-  }
+        #endregion private
+    }
   /// <summary>
   /// Immutable type representing table dimensions
   /// </summary>

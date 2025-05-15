@@ -28,6 +28,8 @@ namespace Data
 
             double VELOCITYFACTOR = 4.0f;
 
+            BallsList.Clear();
+
             for (int i = 0; i < numberOfBalls; i++)
             {
 

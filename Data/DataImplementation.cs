@@ -33,6 +33,9 @@ namespace Data
 
             BallsList.Clear();
 
+            logger.Log("creation.txt", $"--- NEW SIMULATION START --- {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+
+
             for (int i = 0; i < numberOfBalls; i++)
             {
 
@@ -40,6 +43,14 @@ namespace Data
                 Vector startingVelocity = new Vector((random.NextDouble()) * VELOCITYFACTOR, (random.NextDouble()) * VELOCITYFACTOR);
                 double radius = random.NextDouble()*10+10;
                 Ball newBall = new Ball(startingPosition, startingVelocity, radius);
+
+
+                string logMessage = $"Ball {i + 1} created at position x: {startingPosition.x:F2}, y: {startingPosition.y:F2} " +
+                        $"with velocity vx: {startingVelocity.x:F2}, vy: {startingVelocity.y:F2}, radius: {radius:F2}";
+                logger.Log("creation.txt", logMessage);
+
+
+
                 upperLayerHandler(startingPosition, newBall);
                 BallsList.Add(newBall);
 

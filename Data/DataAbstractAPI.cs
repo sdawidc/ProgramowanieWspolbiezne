@@ -31,9 +31,6 @@ namespace Data
 
         public abstract void LogToFile(string fileName, string log);
 
-        public abstract int getBallIndex(IBall ball);
-
-
     #endregion public API
 
     #region IDisposable

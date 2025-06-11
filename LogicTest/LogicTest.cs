@@ -68,6 +68,11 @@ namespace LogicTest
                 return 5.0;
             }
 
+            public override void LogToFile(string fileName, string log)
+            {
+                throw new NotImplementedException();
+            }
+
             public override double GetBallWeight(int index)
             {
                 return 1.0;
@@ -142,6 +147,11 @@ namespace LogicTest
                 throw new NotImplementedException();
             }
 
+            public override void LogToFile(string fileName, string log)
+            {
+                throw new NotImplementedException();
+            }
+
             public override void Dispose()
             {
                 Disposed = true;
@@ -192,6 +202,11 @@ namespace LogicTest
             }
 
             public override void SetBallVelocity(int index, IVector newVelocity)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void LogToFile(string fileName, string log)
             {
                 throw new NotImplementedException();
             }

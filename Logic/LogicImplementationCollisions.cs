@@ -12,6 +12,10 @@ namespace Logic
     {
         #region ctor
 
+        private DateTime lastUpdate = DateTime.Now;
+        private readonly object timeLock = new();
+
+        private const float ballSpeed=80f;
         public LogicImplementationCollisions() : this(null) { }
 
         internal LogicImplementationCollisions(UnderneathLayerAPI? underneathLayer)
@@ -56,8 +60,16 @@ namespace Logic
             if (Disposed)
                 return;
 
+            double deltaTime;
+            lock (timeLock)
+            {
+                DateTime now = DateTime.Now;
+                deltaTime = (now - lastUpdate).TotalSeconds;
+                lastUpdate = now;
+            }
             await Task.Run(() =>
             {
+                
                 var quadtree = new Quadtree(0, 0, 0, 392, 412);
                 int count = layerBellow.GetBallsListSize();
                 List<TempBall> tempBalls = new(count);
@@ -82,11 +94,12 @@ namespace Logic
 
                     foreach (var other in nearbyBalls)
                     {
-                        if (ball != other && CheckIfBallsCollide(ball, other))
+                        if (ball != other && CheckIfBallsCollide(ball, other) && ball.GetHashCode()<other.GetHashCode())
                         {
                             lock (GetLock(ball, other)) // synchronizacja przy modyfikacji prędkosci
                             {
                                 HandleBallCollision(ball, other);
+                                layerBellow.LogToFile("collisions.txt","Collision position: x - "+(ball.Position.x+other.Position.x)/2 + " y - "+(ball.Position.y+other.Position.y)/2);
                             }
                         }
                     }
@@ -94,8 +107,8 @@ namespace Logic
                     double radius = ball.Radius;
                     double diameter = radius * 2;
 
-                    double newX = ball.Position.x + ball.Velocity.x;
-                    double newY = ball.Position.y + ball.Velocity.y;
+                    double newX = ball.Position.x + ball.Velocity.x * deltaTime * ballSpeed;
+                    double newY = ball.Position.y + ball.Velocity.y * deltaTime * ballSpeed;
 
                     double newVelX = ball.Velocity.x;
                     double newVelY = ball.Velocity.y;
@@ -115,7 +128,7 @@ namespace Logic
                     var updatedVelocity = new Vector(newVelX, newVelY);
                     var movement = new Vector(newX - ball.Position.x, newY - ball.Position.y);
 
-                    lock (layerBellow) // uniknięcie problemów wielowątkowych w niższej warstwie
+                    lock (layerBellow)
                     {
                         layerBellow.SetBallVelocity(i, updatedVelocity);
                         layerBellow.MoveBall(i, movement);

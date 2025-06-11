@@ -11,7 +11,8 @@ namespace Data
     #region ctor
 
     public DataImplementation() { }
-  
+
+        private Logger logger;
 
         #endregion ctor
 
@@ -25,6 +26,8 @@ namespace Data
                 throw new ArgumentNullException(nameof(upperLayerHandler));
 
             Random random = new Random();
+
+            logger = new Logger("Logs");
 
             double VELOCITYFACTOR = 4.0f;
 
@@ -77,6 +80,11 @@ namespace Data
         public override double GetBallWeight(int index)
         {
             return BallsList.ElementAt(index).Weight;
+        }
+
+        public override void LogToFile(string fileName, string log)
+        {
+            logger.Log(fileName, log);
         }
 
         #endregion DataAbstractAPI

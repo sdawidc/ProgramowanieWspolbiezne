@@ -33,9 +33,6 @@ namespace Data
 
             BallsList.Clear();
 
-            logger.Log("creation.txt", $"--- NEW SIMULATION START --- {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
-
-
             for (int i = 0; i < numberOfBalls; i++)
             {
 
@@ -47,7 +44,7 @@ namespace Data
 
                 string logMessage = $"Ball {i + 1} created at position x: {startingPosition.x:F2}, y: {startingPosition.y:F2} " +
                         $"with velocity vx: {startingVelocity.x:F2}, vy: {startingVelocity.y:F2}, radius: {radius:F2}";
-                logger.Log("creation.txt", logMessage);
+                logger.Log(logMessage);
 
 
 
@@ -55,7 +52,7 @@ namespace Data
                 BallsList.Add(newBall);
 
             }
-        
+            logger.resetSessionTimestamp();
         }
 
         public override int GetBallsListSize()
@@ -93,9 +90,14 @@ namespace Data
             return BallsList.ElementAt(index).Weight;
         }
 
-        public override void LogToFile(string fileName, string log)
+        public override void LogData(string log)
         {
-            logger.Log(fileName, log);
+            logger.Log(log);
+        }
+
+        public override void LogData(IVector vec)
+        {
+            logger.Log(vec);
         }
 
         #endregion DataAbstractAPI

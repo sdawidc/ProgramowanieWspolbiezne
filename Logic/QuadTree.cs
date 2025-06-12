@@ -142,11 +142,14 @@ namespace Logic
             Velocity = velocity;
             Radius = radius;
             Weight = weight;
+            IsColliding = false;
         }
 
         public IVector Position { get; set; }
         public IVector Velocity { get; set; }
         public double Radius { get; }
         public double Weight { get; }
+
+        public bool IsColliding { get; set; }
     }
 }

@@ -19,6 +19,8 @@ namespace Data
 
         private string currentFileName;
 
+        private DateTime sessionTimestamp;
+
         public Logger(string logFolder)
         {
             this.logFolder = logFolder;
@@ -26,6 +28,8 @@ namespace Data
             if (!Directory.Exists(logFolder))
                 Directory.CreateDirectory(logFolder);
 
+
+            sessionTimestamp = DateTime.Now;
             loggingThread = new Thread(ProcessLogQueue)
             {
                 IsBackground = true
@@ -34,13 +38,32 @@ namespace Data
             isRunning = true;
         }
 
-        public void Log(string fileName, string log)
+        private void LogToFile(string fileName, string log)
         {
-            currentFileName = Path.Combine(logFolder, fileName);
+            currentFileName = Path.Combine(logFolder, getTimestampedFilename(fileName));
             logQueue.Enqueue(DateTime.Now+" | "+log);
             logSignal.Set();
         }
 
+        public void Log(IVector collision)
+        {
+            LogToFile("collisions", "Collision position: x - " + collision.x + " y - " + collision.y);
+        }
+
+        public void Log(string creationLog)
+        {
+            LogToFile("creation", creationLog);
+        }
+
+        public void resetSessionTimestamp()
+        {
+            sessionTimestamp = DateTime.Now;
+        }
+
+        private string getTimestampedFilename(string fileName)
+        {
+            return fileName + ", " + sessionTimestamp.ToString().Replace(':','-') + ".txt";
+        }
         private void ProcessLogQueue()
         {
             while (isRunning)
@@ -55,7 +78,7 @@ namespace Data
                     }
                     catch
                     {
-                        throw new IOException("Error writing to file: '"+currentFileName+"'");
+                        throw new IOException("Error writing to file: '"+ getTimestampedFilename(currentFileName) + "'");
                     }
                 }
             }

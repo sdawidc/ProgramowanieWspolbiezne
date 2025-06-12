@@ -29,13 +29,15 @@ namespace Data
 
         public abstract void MoveBall(int ballNumber,IVector vector);
 
-        public abstract void LogToFile(string fileName, string log);
+        public abstract void LogData(string log);
 
-    #endregion public API
+        public abstract void LogData(IVector vec);
 
-    #region IDisposable
+        #endregion public API
 
-    public abstract void Dispose();
+        #region IDisposable
+
+        public abstract void Dispose();
 
     #endregion IDisposable
 

@@ -15,7 +15,7 @@ namespace Logic
         private DateTime lastUpdate = DateTime.Now;
         private readonly object timeLock = new();
 
-        private const float ballSpeed=80f;
+        private const float ballSpeed=0.5f;
         public LogicImplementationCollisions() : this(null) { }
 
         internal LogicImplementationCollisions(UnderneathLayerAPI? underneathLayer)
@@ -99,16 +99,19 @@ namespace Logic
                             lock (GetLock(ball, other)) // synchronizacja przy modyfikacji prędkosci
                             {
                                 HandleBallCollision(ball, other);
-                                layerBellow.LogToFile("collisions.txt","Collision position: x - "+(ball.Position.x+other.Position.x)/2 + " y - "+(ball.Position.y+other.Position.y)/2);
+                                IVector vec = new Vector((ball.Position.x + other.Position.x) / 2, (ball.Position.y + other.Position.y) / 2);
+                                layerBellow.LogData(vec);
                             }
+                            ball.IsColliding = false;
+                            other.IsColliding = false;
                         }
                     }
 
                     double radius = ball.Radius;
                     double diameter = radius * 2;
 
-                    double newX = ball.Position.x + ball.Velocity.x * deltaTime * ballSpeed;
-                    double newY = ball.Position.y + ball.Velocity.y * deltaTime * ballSpeed;
+                    double newX = ball.Position.x + ball.Velocity.x  * ballSpeed;
+                    double newY = ball.Position.y + ball.Velocity.y  * ballSpeed;
 
                     double newVelX = ball.Velocity.x;
                     double newVelY = ball.Velocity.y;
@@ -146,6 +149,7 @@ namespace Logic
 
         private bool CheckIfBallsCollide(TempBall a, TempBall b)
         {
+            
             double dx = a.Position.x - b.Position.x;
             double dy = a.Position.y - b.Position.y;
             double dist = Math.Sqrt(dx * dx + dy * dy);
@@ -166,9 +170,16 @@ namespace Logic
             double dot = dvx * dx + dvy * dy;
             if (dot >= 0) return;
 
+            if(!a.IsColliding || !b.IsColliding)
+            {
+                a.IsColliding = true;
+                b.IsColliding = true;
+            }
+
             double scale = dot / distSq;
             double impulseX = scale * dx;
             double impulseY = scale * dy;
+
 
             a.Velocity = new Vector(
                 a.Velocity.x - (2 * b.Weight / (a.Weight + b.Weight)) * impulseX,

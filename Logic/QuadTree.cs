@@ -136,7 +136,7 @@ namespace Logic
     /// </summary>
     public class TempBall
     {
-        public TempBall(IVector position, IVector velocity, double radius, double weight)
+        public TempBall(int i,IVector position, IVector velocity, double radius, double weight)
         {
             Position = position;
             Velocity = velocity;
@@ -145,6 +145,7 @@ namespace Logic
             IsColliding = false;
         }
 
+        public int Index { get; set; }
         public IVector Position { get; set; }
         public IVector Velocity { get; set; }
         public double Radius { get; }

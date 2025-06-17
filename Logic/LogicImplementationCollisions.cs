@@ -1,5 +1,6 @@
 ﻿using Data;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -15,7 +16,7 @@ namespace Logic
         private DateTime lastUpdate = DateTime.Now;
         private readonly object timeLock = new();
 
-        private const float ballSpeed=0.5f;
+        private const float ballSpeed=50f;
         public LogicImplementationCollisions() : this(null) { }
 
         internal LogicImplementationCollisions(UnderneathLayerAPI? underneathLayer)
@@ -81,10 +82,14 @@ namespace Logic
                     double radius = layerBellow.GetBallRadius(i);
                     double weight = layerBellow.GetBallWeight(i);
 
-                    var tempBall = new TempBall(pos, vel, radius, weight);
+                    var tempBall = new TempBall(i, pos, vel, radius, weight);
                     tempBalls.Add(tempBall);
                     quadtree.Insert(tempBall);
                 }
+
+                List<BallUpdate> updates = new();
+
+                var loggedPairs = new ConcurrentDictionary<(int, int), bool>();
 
                 // Kolizje i ruch przetwarzane równolegle
                 Parallel.For(0, tempBalls.Count, i =>
@@ -94,24 +99,32 @@ namespace Logic
 
                     foreach (var other in nearbyBalls)
                     {
-                        if (ball != other && CheckIfBallsCollide(ball, other) && ball.GetHashCode()<other.GetHashCode())
+                        if (ball != other && CheckIfBallsCollide(ball, other))
                         {
-                            lock (GetLock(ball, other)) // synchronizacja przy modyfikacji prędkosci
+                            var pair = (Math.Min(ball.Index, other.Index), Math.Max(ball.Index, other.Index)); //krotka z indeksami piłek kolidujących w danej klatce
+                            lock (GetLock(ball, other))
                             {
                                 HandleBallCollision(ball, other);
-                                IVector vec = new Vector((ball.Position.x + other.Position.x) / 2, (ball.Position.y + other.Position.y) / 2);
-                                layerBellow.LogData(vec);
+
+                                if (!loggedPairs.ContainsKey(pair))
+                                {
+                                    loggedPairs[pair] = true;
+
+                                    IVector vec = new Vector(
+                                        (ball.Position.x + other.Position.x) / 2,
+                                        (ball.Position.y + other.Position.y) / 2);
+
+                                    layerBellow.LogData(vec);
+                                }
                             }
-                            ball.IsColliding = false;
-                            other.IsColliding = false;
                         }
                     }
 
                     double radius = ball.Radius;
                     double diameter = radius * 2;
 
-                    double newX = ball.Position.x + ball.Velocity.x  * ballSpeed;
-                    double newY = ball.Position.y + ball.Velocity.y  * ballSpeed;
+                    double newX = ball.Position.x + ball.Velocity.x  * ballSpeed * deltaTime;
+                    double newY = ball.Position.y + ball.Velocity.y  * ballSpeed * deltaTime;
 
                     double newVelX = ball.Velocity.x;
                     double newVelY = ball.Velocity.y;
@@ -131,12 +144,27 @@ namespace Logic
                     var updatedVelocity = new Vector(newVelX, newVelY);
                     var movement = new Vector(newX - ball.Position.x, newY - ball.Position.y);
 
-                    lock (layerBellow)
+                    lock (updates)
                     {
-                        layerBellow.SetBallVelocity(i, updatedVelocity);
-                        layerBellow.MoveBall(i, movement);
+                        updates.Add(new BallUpdate
+                        {
+                            index = i,
+                            newVelocity = updatedVelocity,
+                            movement = movement
+                        });
                     }
+
+
                 });
+                lock (layerBellow)
+                {
+                    foreach (BallUpdate update in updates)
+                    {
+                        layerBellow.SetBallVelocity(update.index, update.newVelocity);
+                        layerBellow.MoveBall(update.index, update.movement);
+                    }
+                }
+
             });
         }
 
@@ -161,6 +189,7 @@ namespace Logic
             double dx = a.Position.x - b.Position.x;
             double dy = a.Position.y - b.Position.y;
             double distSq = dx * dx + dy * dy;
+            double dist = Math.Sqrt(distSq);
 
             if (distSq == 0) return;
 
@@ -169,12 +198,6 @@ namespace Logic
 
             double dot = dvx * dx + dvy * dy;
             if (dot >= 0) return;
-
-            if(!a.IsColliding || !b.IsColliding)
-            {
-                a.IsColliding = true;
-                b.IsColliding = true;
-            }
 
             double scale = dot / distSq;
             double impulseX = scale * dx;
@@ -190,6 +213,29 @@ namespace Logic
                 b.Velocity.x + (2 * a.Weight / (a.Weight + b.Weight)) * impulseX,
                 b.Velocity.y + (2 * a.Weight / (a.Weight + b.Weight)) * impulseY
             );
+
+            double overlap = (a.Radius + b.Radius) - dist;
+            const double offset = 1.03f;
+
+            if (overlap > 0)
+            {
+                double totalWeight = a.Weight + b.Weight;
+                double nx = dx / dist;
+                double ny = dy / dist;
+
+                double displacementA = overlap * (b.Weight / totalWeight) * offset;
+                double displacementB = overlap * (a.Weight / totalWeight) * offset;
+
+                a.Position = new Vector(
+                    a.Position.x + nx * displacementA,
+                    a.Position.y + ny * displacementA
+                );
+
+                b.Position = new Vector(
+                    b.Position.x - nx * displacementB,
+                    b.Position.y - ny * displacementB
+                );
+            }
         }
 
         #endregion BusinessLogicAbstractAPI

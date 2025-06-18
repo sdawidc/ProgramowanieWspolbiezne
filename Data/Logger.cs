@@ -13,11 +13,9 @@ namespace Data
     {
         private readonly string logFolder;
         private readonly Thread loggingThread;
-        private readonly ConcurrentQueue<string> logQueue = new();
+        private readonly ConcurrentQueue<(string, string)> logQueue = new();
         private readonly AutoResetEvent logSignal = new(false);
         private bool isRunning = false;
-
-        private string currentFileName;
 
         private DateTime sessionTimestamp;
 
@@ -40,8 +38,8 @@ namespace Data
 
         private void LogToFile(string fileName, string log)
         {
-            currentFileName = Path.Combine(logFolder, getTimestampedFilename(fileName));
-            logQueue.Enqueue(DateTime.Now+" | "+log);
+            string currentFileName = Path.Combine(logFolder, getTimestampedFilename(fileName));
+            logQueue.Enqueue((currentFileName,DateTime.Now+" | "+log));
             logSignal.Set();
         }
 
@@ -72,14 +70,14 @@ namespace Data
 
                 while (logQueue.TryDequeue(out var log))
                 {
-                    try
-                    {
-                        File.AppendAllText(currentFileName, log + Environment.NewLine);
-                    }
-                    catch
-                    {
-                        throw new IOException("Error writing to file: '"+ getTimestampedFilename(currentFileName) + "'");
-                    }
+                        try
+                        {
+                            File.AppendAllText(log.Item1, log.Item2 + Environment.NewLine);
+                        }
+                        catch
+                        {
+                            throw new IOException("Error writing to file: '" + getTimestampedFilename(log.Item1) + "'");
+                        }
                 }
             }
         }
